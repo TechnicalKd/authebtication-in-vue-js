@@ -12,7 +12,8 @@
      state: {
          email: "",
          token: "",
-         refresh: ""
+         refresh: "",
+         user: ""
      },
      getters: {
          isAuth(state) {
@@ -21,6 +22,9 @@
          }
      },
      mutations: {
+         addUserInfo(state, userInfo) {
+             state.user = userInfo
+         },
          auth(state, authData) {
              state.email = authData.email,
                  state.token = authData.idToken,
@@ -36,12 +40,13 @@
      },
      actions: {
          getUserInfo({ commit }, payload) {
-             Vue.http.post(`${FbAuth}/accounts:lookup??key=${FbKey}}`, {
+             Vue.http.post(`${FbAuth}accounts:lookup?key=${FbKey}`, {
                      idToken: payload
                  })
                  .then(response => response.json())
-                 .then(response => {
-                     console.log(response)
+                 .then(authData => {
+                     commit("addUserInfo", authData.users[0])
+                     console.log(authData)
                  })
          },
          refreshToken({ commit }) {
